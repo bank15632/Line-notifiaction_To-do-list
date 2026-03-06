@@ -8,21 +8,30 @@ export default function NewProjectPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
     try {
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, description: description || null }),
       });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Error ${res.status}`);
+      }
       const project = await res.json();
       router.push(`/projects/${project.id}`);
-    } catch {
-      alert("เกิดข้อผิดพลาด");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "ไม่สามารถสร้างโปรเจคได้ กรุณาลองใหม่"
+      );
     } finally {
       setLoading(false);
     }
@@ -33,6 +42,13 @@ export default function NewProjectPage() {
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
         สร้างโปรเจคใหม่
       </h1>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">

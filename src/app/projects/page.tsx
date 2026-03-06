@@ -5,36 +5,55 @@ import ProjectCard from "@/components/ProjectCard";
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
-  const projects = await prisma.project.findMany({
-    include: {
-      tasks: { include: { subTasks: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  let projectsWithStats: {
+    id: string;
+    name: string;
+    description: string | null;
+    todoCount: number;
+    doingCount: number;
+    doneCount: number;
+    totalTasks: number;
+    completionPercent: number;
+    createdAt: string;
+    updatedAt: string;
+  }[] = [];
+  let error: string | null = null;
 
-  const projectsWithStats = projects.map((p) => {
-    const allItems = [
-      ...p.tasks.map((t) => t.status),
-      ...p.tasks.flatMap((t) => t.subTasks.map((s) => s.status)),
-    ];
-    const todoCount = allItems.filter((s) => s === "TODO").length;
-    const doingCount = allItems.filter((s) => s === "DOING").length;
-    const doneCount = allItems.filter((s) => s === "DONE").length;
-    const total = allItems.length;
+  try {
+    const projects = await prisma.project.findMany({
+      include: {
+        tasks: { include: { subTasks: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
 
-    return {
-      id: p.id,
-      name: p.name,
-      description: p.description,
-      todoCount,
-      doingCount,
-      doneCount,
-      totalTasks: total,
-      completionPercent: total === 0 ? 0 : Math.round((doneCount / total) * 100),
-      createdAt: p.createdAt.toISOString(),
-      updatedAt: p.updatedAt.toISOString(),
-    };
-  });
+    projectsWithStats = projects.map((p) => {
+      const allItems = [
+        ...p.tasks.map((t) => t.status),
+        ...p.tasks.flatMap((t) => t.subTasks.map((s) => s.status)),
+      ];
+      const todoCount = allItems.filter((s) => s === "TODO").length;
+      const doingCount = allItems.filter((s) => s === "DOING").length;
+      const doneCount = allItems.filter((s) => s === "DONE").length;
+      const total = allItems.length;
+
+      return {
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        todoCount,
+        doingCount,
+        doneCount,
+        totalTasks: total,
+        completionPercent: total === 0 ? 0 : Math.round((doneCount / total) * 100),
+        createdAt: p.createdAt.toISOString(),
+        updatedAt: p.updatedAt.toISOString(),
+      };
+    });
+  } catch (e) {
+    console.error("Failed to load projects:", e);
+    error = "ไม่สามารถโหลดข้อมูลโปรเจคได้ กรุณาลองใหม่อีกครั้ง";
+  }
 
   return (
     <div>
@@ -48,7 +67,14 @@ export default async function ProjectsPage() {
         </Link>
       </div>
 
-      {projectsWithStats.length === 0 ? (
+      {error ? (
+        <div className="text-center py-16">
+          <p className="text-red-500 mb-2">{error}</p>
+          <p className="text-gray-400 text-sm">
+            หากปัญหายังคงอยู่ ตรวจสอบการตั้งค่า DATABASE_URL ใน Vercel
+          </p>
+        </div>
+      ) : projectsWithStats.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
           <p className="text-lg mb-2">ยังไม่มีโปรเจค</p>
           <Link href="/projects/new" className="text-indigo-600 hover:underline">
