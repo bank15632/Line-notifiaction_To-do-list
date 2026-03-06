@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  TODO
+  DOING
+  DONE
+}
+
+enum NotifyFrequency {
+  DAILY
+  EVERY_3_DAYS
+  WEEKLY
+}
+
+model Project {
+  id          String             @id @default(cuid())
+  name        String
+  description String?
+  tasks       Task[]
+  lineGroups  ProjectLineGroup[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model Task {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  deadline        DateTime?
+  status          Status    @default(TODO)
+  projectId       String
+  project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  subTasks        SubTask[]
+  dependsOnTaskId String?
+  dependsOnTask   Task?     @relation("TaskDependency", fields: [dependsOnTaskId], references: [id])
+  dependedByTasks Task[]    @relation("TaskDependency")
+  dependsOnSubId  String?
+  dependsOnSub    SubTask?  @relation("TaskDependsOnSub", fields: [dependsOnSubId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model SubTask {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  deadline        DateTime?
+  status          Status    @default(TODO)
+  taskId          String
+  task            Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  dependsOnTaskId String?
+  dependsOnSubId  String?
+  dependsOnSub    SubTask?  @relation("SubTaskDependency", fields: [dependsOnSubId], references: [id])
+  dependedBySubs  SubTask[] @relation("SubTaskDependency")
+  dependedByTasks Task[]    @relation("TaskDependsOnSub")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model LineGroup {
+  id              String             @id @default(cuid())
+  groupId         String             @unique
+  name            String
+  notifyFrequency NotifyFrequency    @default(DAILY)
+  notifyTime      String             @default("09:00")
+  lastNotifiedAt  DateTime?
+  projects        ProjectLineGroup[]
+  createdAt       DateTime           @default(now())
+}
+
+model ProjectLineGroup {
+  id          String    @id @default(cuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  lineGroupId String
+  lineGroup   LineGroup @relation(fields: [lineGroupId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@unique([projectId, lineGroupId])
+}
