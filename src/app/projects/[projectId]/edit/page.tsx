@@ -33,7 +33,7 @@ export default function EditProjectPage() {
       router.push(`/projects/${projectId}`);
       router.refresh();
     } catch {
-      alert("เกิดข้อผิดพลาด");
+      alert("An error occurred");
     } finally {
       setLoading(false);
     }
@@ -41,11 +41,11 @@ export default function EditProjectPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">แก้ไขโปรเจค</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Edit Project</h1>
       <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            ชื่อโปรเจค *
+            Project Name *
           </label>
           <input
             type="text"
@@ -57,7 +57,7 @@ export default function EditProjectPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            รายละเอียด
+            Description
           </label>
           <textarea
             value={description}
@@ -71,7 +71,7 @@ export default function EditProjectPage() {
           disabled={loading}
           className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition"
         >
-          {loading ? "กำลังบันทึก..." : "บันทึก"}
+          {loading ? "Saving..." : "Save"}
         </button>
       </form>
     </div>

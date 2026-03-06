@@ -42,10 +42,10 @@ export default async function TaskDetailPage({
         href={`/projects/${projectId}`}
         className="text-sm text-gray-400 hover:text-indigo-600"
       >
-        &larr; กลับไปโปรเจค {task.project.name}
+        &larr; Back to {task.project.name}
       </Link>
       <h1 className="text-2xl font-bold text-gray-800 mt-2 mb-6">
-        รายละเอียด Task
+        Task Details
       </h1>
       <TaskRow task={taskData} />
       <div className="mt-4">
@@ -53,7 +53,7 @@ export default async function TaskDetailPage({
           href={`/projects/${projectId}/tasks/${taskId}/edit`}
           className="text-sm text-indigo-600 hover:underline"
         >
-          แก้ไข Task นี้
+          Edit this Task
         </Link>
       </div>
     </div>

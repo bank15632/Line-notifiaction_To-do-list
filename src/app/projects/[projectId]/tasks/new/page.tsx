@@ -36,10 +36,10 @@ export default async function NewTaskPage({
         href={`/projects/${projectId}`}
         className="text-sm text-gray-400 hover:text-indigo-600"
       >
-        &larr; กลับไปโปรเจค {project.name}
+        &larr; Back to {project.name}
       </Link>
       <h1 className="text-2xl font-bold text-gray-800 mt-2 mb-6">
-        เพิ่ม Task ใหม่
+        New Task
       </h1>
       <div className="max-w-lg">
         <TaskForm projectId={projectId} allTasks={allTasks} />

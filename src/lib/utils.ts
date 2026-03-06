@@ -8,13 +8,13 @@ export function daysRemaining(deadline: Date | string): number {
 
 export function formatDaysRemaining(deadline: Date | string): string {
   const days = daysRemaining(deadline);
-  if (days > 0) return `เหลือ ${days} วัน`;
-  if (days === 0) return `ครบกำหนดวันนี้`;
-  return `เลยกำหนด ${Math.abs(days)} วัน`;
+  if (days > 0) return `${days} days left`;
+  if (days === 0) return `Due today`;
+  return `${Math.abs(days)} days overdue`;
 }
 
 export function formatDate(date: Date | string): string {
-  return new Date(date).toLocaleDateString("th-TH", {
+  return new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -24,11 +24,11 @@ export function formatDate(date: Date | string): string {
 export function statusLabel(status: string): string {
   switch (status) {
     case "TODO":
-      return "รอดำเนินการ";
+      return "Todo";
     case "DOING":
-      return "กำลังทำ";
+      return "Doing";
     case "DONE":
-      return "เสร็จแล้ว";
+      return "Done";
     default:
       return status;
   }

@@ -28,11 +28,11 @@ function shouldNotify(
 function statusIcon(status: string): string {
   switch (status) {
     case "TODO":
-      return "[รอ]";
+      return "[Todo]";
     case "DOING":
-      return "[กำลังทำ]";
+      return "[Doing]";
     case "DONE":
-      return "[เสร็จ]";
+      return "[Done]";
     default:
       return "[ ]";
   }
@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
 
     if (group.projects.length === 0) continue;
 
-    let message = "== สรุปงาน To-Do List ==\n";
+    let message = "== To-Do List Summary ==\n";
 
     for (const pl of group.projects) {
       const project = pl.project;
@@ -97,10 +97,10 @@ export async function GET(req: NextRequest) {
           message += `\n   Deadline: ${formatDate(task.deadline)} (${formatDaysRemaining(task.deadline)})`;
         }
         if (task.dependsOnTask) {
-          message += `\n   รองานจาก Task: ${task.dependsOnTask.name}`;
+          message += `\n   Depends on Task: ${task.dependsOnTask.name}`;
         }
         if (task.dependsOnSub) {
-          message += `\n   รองานจาก Sub-task: ${task.dependsOnSub.name}`;
+          message += `\n   Depends on Sub-task: ${task.dependsOnSub.name}`;
         }
 
         for (const sub of task.subTasks) {
@@ -109,10 +109,10 @@ export async function GET(req: NextRequest) {
             message += `\n      Deadline: ${formatDate(sub.deadline)} (${formatDaysRemaining(sub.deadline)})`;
           }
           if (sub.dependsOnTaskId) {
-            message += `\n      รองานจาก Task ID: ${sub.dependsOnTaskId}`;
+            message += `\n      Depends on Task ID: ${sub.dependsOnTaskId}`;
           }
           if (sub.dependsOnSubId) {
-            message += `\n      รองานจาก Sub-task ID: ${sub.dependsOnSubId}`;
+            message += `\n      Depends on Sub-task ID: ${sub.dependsOnSubId}`;
           }
         }
       }

@@ -53,14 +53,14 @@ export default function SettingsPage() {
       setNewGroupName("");
       await fetchData();
     } catch {
-      alert("เกิดข้อผิดพลาด");
+      alert("An error occurred");
     } finally {
       setLoading(false);
     }
   };
 
   const deleteGroup = async (id: string) => {
-    if (!confirm("ต้องการลบกลุ่มนี้?")) return;
+    if (!confirm("Delete this group?")) return;
     await fetch(`/api/line-groups/${id}`, { method: "DELETE" });
     await fetchData();
   };
@@ -97,9 +97,9 @@ export default function SettingsPage() {
 
   const freqLabel = (f: string) => {
     switch (f) {
-      case "DAILY": return "ทุกวัน";
-      case "EVERY_3_DAYS": return "ทุก 3 วัน";
-      case "WEEKLY": return "ทุกอาทิตย์";
+      case "DAILY": return "Daily";
+      case "EVERY_3_DAYS": return "Every 3 Days";
+      case "WEEKLY": return "Weekly";
       default: return f;
     }
   };
@@ -107,15 +107,15 @@ export default function SettingsPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        ตั้งค่า LINE Bot
+        LINE Bot Settings
       </h1>
 
       <div className="bg-white border rounded-lg p-5 mb-6">
         <h2 className="font-semibold text-gray-700 mb-3">
-          เพิ่มกลุ่ม LINE ด้วยตนเอง
+          Add LINE Group Manually
         </h2>
         <p className="text-sm text-gray-400 mb-3">
-          หรือเพิ่ม Bot เข้ากลุ่ม LINE แล้วระบบจะลงทะเบียนอัตโนมัติ
+          Or add the Bot to a LINE group and it will register automatically
         </p>
         <form onSubmit={addGroup} className="flex gap-3 flex-wrap">
           <input
@@ -128,7 +128,7 @@ export default function SettingsPage() {
           />
           <input
             type="text"
-            placeholder="ชื่อกลุ่ม"
+            placeholder="Group Name"
             value={newGroupName}
             onChange={(e) => setNewGroupName(e.target.value)}
             required
@@ -139,14 +139,14 @@ export default function SettingsPage() {
             disabled={loading}
             className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 disabled:opacity-50"
           >
-            เพิ่ม
+            Add
           </button>
         </form>
       </div>
 
       {groups.length === 0 ? (
         <p className="text-center text-gray-400 py-8">
-          ยังไม่มีกลุ่ม LINE ที่ลงทะเบียน
+          No LINE groups registered
         </p>
       ) : (
         <div className="space-y-4">
@@ -163,22 +163,22 @@ export default function SettingsPage() {
                   onClick={() => deleteGroup(group.id)}
                   className="text-xs text-red-500 hover:underline"
                 >
-                  ลบกลุ่ม
+                  Delete Group
                 </button>
               </div>
 
               <div className="mb-3">
                 <label className="text-sm text-gray-600 mr-2">
-                  ความถี่แจ้งเตือน:
+                  Notification Frequency:
                 </label>
                 <select
                   value={group.notifyFrequency}
                   onChange={(e) => updateFrequency(group.id, e.target.value)}
                   className="border rounded px-2 py-1 text-sm"
                 >
-                  <option value="DAILY">ทุกวัน</option>
-                  <option value="EVERY_3_DAYS">ทุก 3 วัน</option>
-                  <option value="WEEKLY">ทุกอาทิตย์</option>
+                  <option value="DAILY">Daily</option>
+                  <option value="EVERY_3_DAYS">Every 3 Days</option>
+                  <option value="WEEKLY">Weekly</option>
                 </select>
                 <span className="text-sm text-gray-400 ml-2">
                   ({freqLabel(group.notifyFrequency)})
@@ -187,10 +187,10 @@ export default function SettingsPage() {
 
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-2">
-                  โปรเจคที่แจ้งเตือน:
+                  Notified Projects:
                 </p>
                 {projects.length === 0 ? (
-                  <p className="text-xs text-gray-400">ยังไม่มีโปรเจค</p>
+                  <p className="text-xs text-gray-400">No projects yet</p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
                     {projects.map((p) => {

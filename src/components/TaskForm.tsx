@@ -109,7 +109,7 @@ export default function TaskForm({
       router.refresh();
     } catch (err) {
       console.error(err);
-      alert("เกิดข้อผิดพลาด");
+      alert("An error occurred");
     } finally {
       setLoading(false);
     }
@@ -123,7 +123,7 @@ export default function TaskForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          ชื่องาน *
+          Task Name *
         </label>
         <input
           type="text"
@@ -136,7 +136,7 @@ export default function TaskForm({
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          รายละเอียด
+          Description
         </label>
         <textarea
           value={description}
@@ -160,23 +160,23 @@ export default function TaskForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            สถานะ
+            Status
           </label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             className="w-full border rounded-lg px-3 py-2 text-sm"
           >
-            <option value="TODO">รอดำเนินการ</option>
-            <option value="DOING">กำลังทำ</option>
-            <option value="DONE">เสร็จแล้ว</option>
+            <option value="TODO">Todo</option>
+            <option value="DOING">Doing</option>
+            <option value="DONE">Done</option>
           </select>
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          รองานจาก Task
+          Depends on Task
         </label>
         <select
           value={dependsOnTaskId}
@@ -186,7 +186,7 @@ export default function TaskForm({
           }}
           className="w-full border rounded-lg px-3 py-2 text-sm"
         >
-          <option value="">-- ไม่มี --</option>
+          <option value="">-- None --</option>
           {allTasks
             .filter((t) => t.id !== taskId)
             .map((t) => (
@@ -199,7 +199,7 @@ export default function TaskForm({
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          รองานจาก Sub-task
+          Depends on Sub-task
         </label>
         <select
           value={dependsOnSubId}
@@ -209,7 +209,7 @@ export default function TaskForm({
           }}
           className="w-full border rounded-lg px-3 py-2 text-sm"
         >
-          <option value="">-- ไม่มี --</option>
+          <option value="">-- None --</option>
           {allSubTasks.map((s) => (
             <option key={s.id} value={s.id}>
               {s.taskName} &gt; {s.name}
@@ -228,7 +228,7 @@ export default function TaskForm({
               className="rounded"
             />
             <span className="font-medium text-gray-700">
-              มี Sub-task
+              Has Sub-tasks
             </span>
           </label>
 
@@ -248,19 +248,19 @@ export default function TaskForm({
                       onClick={() => removeSubTask(i)}
                       className="text-red-500 text-xs hover:underline"
                     >
-                      ลบ
+                      Remove
                     </button>
                   </div>
                   <input
                     type="text"
-                    placeholder="ชื่อ Sub-task"
+                    placeholder="Sub-task name"
                     value={sub.name}
                     onChange={(e) => updateSubTask(i, "name", e.target.value)}
                     className="w-full border rounded px-2 py-1 text-sm"
                   />
                   <input
                     type="text"
-                    placeholder="รายละเอียด"
+                    placeholder="Description"
                     value={sub.description}
                     onChange={(e) =>
                       updateSubTask(i, "description", e.target.value)
@@ -282,7 +282,7 @@ export default function TaskForm({
                 onClick={addSubTask}
                 className="text-sm text-indigo-600 hover:underline"
               >
-                + เพิ่ม Sub-task
+                + Add Sub-task
               </button>
             </div>
           )}
@@ -294,7 +294,7 @@ export default function TaskForm({
         disabled={loading}
         className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition"
       >
-        {loading ? "กำลังบันทึก..." : isEdit ? "บันทึกการแก้ไข" : "สร้าง Task"}
+        {loading ? "Saving..." : isEdit ? "Save Changes" : "Create Task"}
       </button>
     </form>
   );

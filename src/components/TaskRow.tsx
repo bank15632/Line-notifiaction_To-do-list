@@ -28,7 +28,12 @@ interface Task {
   subTasks: SubTask[];
 }
 
-export default function TaskRow({ task }: { task: Task }) {
+interface TaskRowProps {
+  task: Task;
+  allTasks?: { id: string; name: string; subTasks: { id: string; name: string }[] }[];
+}
+
+export default function TaskRow({ task, allTasks }: TaskRowProps) {
   const router = useRouter();
   const [showSubForm, setShowSubForm] = useState(false);
 
@@ -51,16 +56,20 @@ export default function TaskRow({ task }: { task: Task }) {
   };
 
   const handleDeleteTask = async () => {
-    if (!confirm("ต้องการลบ Task นี้?")) return;
+    if (!confirm("Delete this task?")) return;
     await fetch(`/api/tasks/${task.id}`, { method: "DELETE" });
     router.refresh();
   };
 
   const handleDeleteSub = async (subId: string) => {
-    if (!confirm("ต้องการลบ Sub-task นี้?")) return;
+    if (!confirm("Delete this sub-task?")) return;
     await fetch(`/api/subtasks/${subId}`, { method: "DELETE" });
     router.refresh();
   };
+
+  const doneCount = task.subTasks.filter((s) => s.status === "DONE").length;
+  const totalSubs = task.subTasks.length;
+  const subProgress = totalSubs > 0 ? Math.round((doneCount / totalSubs) * 100) : 0;
 
   return (
     <div className="bg-white border rounded-lg p-4 space-y-3">
@@ -80,12 +89,12 @@ export default function TaskRow({ task }: { task: Task }) {
           )}
           {task.dependsOnTask && (
             <p className="text-sm text-amber-600 mt-1">
-              รองานจาก Task: {task.dependsOnTask.name}
+              Depends on Task: {task.dependsOnTask.name}
             </p>
           )}
           {task.dependsOnSub && (
             <p className="text-sm text-amber-600 mt-1">
-              รองานจาก Sub-task: {task.dependsOnSub.name}
+              Depends on Sub-task: {task.dependsOnSub.name}
             </p>
           )}
         </div>
@@ -96,18 +105,33 @@ export default function TaskRow({ task }: { task: Task }) {
             onChange={(e) => handleStatusChange(e.target.value)}
             className="text-xs border rounded px-1 py-0.5"
           >
-            <option value="TODO">รอ</option>
-            <option value="DOING">ทำอยู่</option>
-            <option value="DONE">เสร็จ</option>
+            <option value="TODO">Todo</option>
+            <option value="DOING">Doing</option>
+            <option value="DONE">Done</option>
           </select>
           <button
             onClick={handleDeleteTask}
             className="text-red-400 hover:text-red-600 text-xs px-1"
           >
-            ลบ
+            Delete
           </button>
         </div>
       </div>
+
+      {totalSubs > 0 && (
+        <div className="px-2">
+          <div className="flex justify-between text-xs text-gray-500 mb-1">
+            <span>Sub-tasks: {doneCount}/{totalSubs} done</span>
+            <span>{subProgress}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-1.5">
+            <div
+              className="bg-indigo-500 h-1.5 rounded-full transition-all"
+              style={{ width: `${subProgress}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {task.subTasks.length > 0 && (
         <div className="pl-4 border-l-2 border-indigo-100 space-y-2">
@@ -133,12 +157,12 @@ export default function TaskRow({ task }: { task: Task }) {
                 )}
                 {sub.dependsOnTaskId && (
                   <p className="text-xs text-amber-600 mt-0.5">
-                    รองานจาก Task ID: {sub.dependsOnTaskId}
+                    Depends on Task ID: {sub.dependsOnTaskId}
                   </p>
                 )}
                 {sub.dependsOnSubId && (
                   <p className="text-xs text-amber-600 mt-0.5">
-                    รองานจาก Sub-task ID: {sub.dependsOnSubId}
+                    Depends on Sub-task ID: {sub.dependsOnSubId}
                   </p>
                 )}
               </div>
@@ -148,15 +172,15 @@ export default function TaskRow({ task }: { task: Task }) {
                   onChange={(e) => handleSubStatusChange(sub.id, e.target.value)}
                   className="text-xs border rounded px-1 py-0.5"
                 >
-                  <option value="TODO">รอ</option>
-                  <option value="DOING">ทำอยู่</option>
-                  <option value="DONE">เสร็จ</option>
+                  <option value="TODO">Todo</option>
+                  <option value="DOING">Doing</option>
+                  <option value="DONE">Done</option>
                 </select>
                 <button
                   onClick={() => handleDeleteSub(sub.id)}
                   className="text-red-400 hover:text-red-600 text-xs px-1"
                 >
-                  ลบ
+                  Delete
                 </button>
               </div>
             </div>
@@ -168,7 +192,7 @@ export default function TaskRow({ task }: { task: Task }) {
         onClick={() => setShowSubForm(!showSubForm)}
         className="text-xs text-indigo-600 hover:underline"
       >
-        + เพิ่ม Sub-task
+        + Add Sub-task
       </button>
 
       {showSubForm && (
@@ -176,6 +200,7 @@ export default function TaskRow({ task }: { task: Task }) {
           taskId={task.id}
           projectId={task.projectId}
           onClose={() => setShowSubForm(false)}
+          allTasks={allTasks}
         />
       )}
     </div>

@@ -18,7 +18,7 @@ export default function ProjectCard({ project }: { project: ProjectWithStats }) 
 
         <div className="mt-4">
           <div className="flex justify-between text-sm mb-1">
-            <span className="text-gray-600">ความสำเร็จ</span>
+            <span className="text-gray-600">Completion</span>
             <span className="font-medium">{pct}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -31,13 +31,13 @@ export default function ProjectCard({ project }: { project: ProjectWithStats }) 
 
         <div className="mt-3 flex gap-3 text-xs">
           <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded">
-            รอ: {project.todoCount}
+            Todo: {project.todoCount}
           </span>
           <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded">
-            ทำอยู่: {project.doingCount}
+            Doing: {project.doingCount}
           </span>
           <span className="bg-green-50 text-green-600 px-2 py-1 rounded">
-            เสร็จ: {project.doneCount}
+            Done: {project.doneCount}
           </span>
         </div>
       </div>

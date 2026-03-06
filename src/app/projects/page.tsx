@@ -52,18 +52,18 @@ export default async function ProjectsPage() {
     });
   } catch (e) {
     console.error("Failed to load projects:", e);
-    error = "ไม่สามารถโหลดข้อมูลโปรเจคได้ กรุณาลองใหม่อีกครั้ง";
+    error = "Failed to load projects. Please try again.";
   }
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">โปรเจคทั้งหมด</h1>
+        <h1 className="text-2xl font-bold text-gray-800">All Projects</h1>
         <Link
           href="/projects/new"
           className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition"
         >
-          + สร้างโปรเจคใหม่
+          + New Project
         </Link>
       </div>
 
@@ -71,14 +71,14 @@ export default async function ProjectsPage() {
         <div className="text-center py-16">
           <p className="text-red-500 mb-2">{error}</p>
           <p className="text-gray-400 text-sm">
-            หากปัญหายังคงอยู่ ตรวจสอบการตั้งค่า DATABASE_URL ใน Vercel
+            If the problem persists, check your DATABASE_URL in Vercel settings.
           </p>
         </div>
       ) : projectsWithStats.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
-          <p className="text-lg mb-2">ยังไม่มีโปรเจค</p>
+          <p className="text-lg mb-2">No projects yet</p>
           <Link href="/projects/new" className="text-indigo-600 hover:underline">
-            สร้างโปรเจคแรกของคุณ
+            Create your first project
           </Link>
         </div>
       ) : (

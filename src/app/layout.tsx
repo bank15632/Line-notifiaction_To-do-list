@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "To-Do List + LINE Bot",
-  description: "ระบบจัดการงาน พร้อมแจ้งเตือนผ่าน LINE",
+  description: "Task management system with LINE notifications",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th">
+    <html lang="en">
       <body className="bg-gray-50 min-h-screen">
         <nav className="bg-white shadow-sm border-b">
           <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-6">
@@ -24,13 +24,13 @@ export default function RootLayout({
               href="/projects"
               className="text-gray-600 hover:text-indigo-600 text-sm"
             >
-              โปรเจคทั้งหมด
+              All Projects
             </Link>
             <Link
               href="/settings"
               className="text-gray-600 hover:text-indigo-600 text-sm"
             >
-              ตั้งค่า LINE
+              LINE Settings
             </Link>
           </div>
         </nav>
