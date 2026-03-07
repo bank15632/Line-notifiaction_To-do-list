@@ -11,7 +11,7 @@ interface LineGroup {
   id: string;
   groupId: string;
   name: string;
-  notifyFrequency: string;
+  notifyFrequency: number;
   notifyTime: string;
   projects: {
     id: string;
@@ -26,6 +26,7 @@ export default function SettingsPage() {
   const [newGroupId, setNewGroupId] = useState("");
   const [newGroupName, setNewGroupName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [notifyingId, setNotifyingId] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     const [gRes, pRes] = await Promise.all([
@@ -65,13 +66,32 @@ export default function SettingsPage() {
     await fetchData();
   };
 
-  const updateFrequency = async (id: string, freq: string) => {
+  const updateFrequency = async (id: string, days: number) => {
     await fetch(`/api/line-groups/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ notifyFrequency: freq }),
+      body: JSON.stringify({ notifyFrequency: days }),
     });
     await fetchData();
+  };
+
+  const notifyNow = async (id: string) => {
+    setNotifyingId(id);
+    try {
+      const res = await fetch(`/api/line-groups/${id}/notify`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to send notification");
+      } else {
+        alert("Notification sent!");
+      }
+    } catch {
+      alert("Failed to send notification");
+    } finally {
+      setNotifyingId(null);
+    }
   };
 
   const toggleProject = async (
@@ -93,15 +113,6 @@ export default function SettingsPage() {
       });
     }
     await fetchData();
-  };
-
-  const freqLabel = (f: string) => {
-    switch (f) {
-      case "DAILY": return "Daily";
-      case "EVERY_3_DAYS": return "Every 3 Days";
-      case "WEEKLY": return "Weekly";
-      default: return f;
-    }
   };
 
   return (
@@ -159,29 +170,40 @@ export default function SettingsPage() {
                     ID: {group.groupId}
                   </p>
                 </div>
-                <button
-                  onClick={() => deleteGroup(group.id)}
-                  className="text-xs text-red-500 hover:underline"
-                >
-                  Delete Group
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => notifyNow(group.id)}
+                    disabled={notifyingId === group.id}
+                    className="text-xs bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 disabled:opacity-50 transition"
+                  >
+                    {notifyingId === group.id ? "Sending..." : "Notify Now"}
+                  </button>
+                  <button
+                    onClick={() => deleteGroup(group.id)}
+                    className="text-xs text-red-500 hover:underline"
+                  >
+                    Delete Group
+                  </button>
+                </div>
               </div>
 
-              <div className="mb-3">
-                <label className="text-sm text-gray-600 mr-2">
-                  Notification Frequency:
+              <div className="mb-3 flex items-center gap-2 flex-wrap">
+                <label className="text-sm text-gray-600">
+                  Notify every
                 </label>
-                <select
+                <input
+                  type="number"
+                  min={1}
+                  max={365}
                   value={group.notifyFrequency}
-                  onChange={(e) => updateFrequency(group.id, e.target.value)}
-                  className="border rounded px-2 py-1 text-sm"
-                >
-                  <option value="DAILY">Daily</option>
-                  <option value="EVERY_3_DAYS">Every 3 Days</option>
-                  <option value="WEEKLY">Weekly</option>
-                </select>
-                <span className="text-sm text-gray-400 ml-2">
-                  ({freqLabel(group.notifyFrequency)})
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    if (val > 0) updateFrequency(group.id, val);
+                  }}
+                  className="border rounded px-2 py-1 text-sm w-20 text-center"
+                />
+                <span className="text-sm text-gray-600">
+                  day{group.notifyFrequency !== 1 ? "s" : ""}
                 </span>
               </div>
 

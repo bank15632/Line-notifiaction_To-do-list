@@ -1,6 +1,6 @@
-import { Status, NotifyFrequency } from "@prisma/client";
+import { Status } from "@prisma/client";
 
-export type { Status, NotifyFrequency };
+export type { Status };
 
 export interface ProjectWithStats {
   id: string;
@@ -49,7 +49,7 @@ export interface LineGroupWithProjects {
   id: string;
   groupId: string;
   name: string;
-  notifyFrequency: NotifyFrequency;
+  notifyFrequency: number;
   notifyTime: string;
   lastNotifiedAt: string | null;
   projects: {

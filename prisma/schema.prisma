@@ -13,12 +13,6 @@ enum Status {
   DONE
 }
 
-enum NotifyFrequency {
-  DAILY
-  EVERY_3_DAYS
-  WEEKLY
-}
-
 model Project {
   id          String             @id @default(cuid())
   name        String
@@ -69,7 +63,7 @@ model LineGroup {
   id              String             @id @default(cuid())
   groupId         String             @unique
   name            String
-  notifyFrequency NotifyFrequency    @default(DAILY)
+  notifyFrequency Int                @default(1)
   notifyTime      String             @default("09:00")
   lastNotifiedAt  DateTime?
   projects        ProjectLineGroup[]

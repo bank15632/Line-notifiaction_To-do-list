@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     data: {
       groupId: body.groupId,
       name: body.name,
-      notifyFrequency: body.notifyFrequency || "DAILY",
+      notifyFrequency: body.notifyFrequency ?? 1,
       notifyTime: body.notifyTime || "09:00",
     },
   });

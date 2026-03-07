@@ -10,9 +10,9 @@ export async function PUT(
   const group = await prisma.lineGroup.update({
     where: { id: groupId },
     data: {
-      name: body.name,
-      notifyFrequency: body.notifyFrequency,
-      notifyTime: body.notifyTime,
+      ...(body.name !== undefined && { name: body.name }),
+      ...(body.notifyFrequency !== undefined && { notifyFrequency: body.notifyFrequency }),
+      ...(body.notifyTime !== undefined && { notifyTime: body.notifyTime }),
     },
   });
   return NextResponse.json(group);
