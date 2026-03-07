@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import TaskRow from "@/components/TaskRow";
+import TaskList from "@/components/TaskList";
 import DeleteProjectButton from "./DeleteProjectButton";
 
 export const dynamic = "force-dynamic";
@@ -17,11 +17,11 @@ export default async function ProjectDetailPage({
     include: {
       tasks: {
         include: {
-          subTasks: true,
+          subTasks: { orderBy: [{ deadline: { sort: "asc", nulls: "last" } }, { createdAt: "asc" }] },
           dependsOnTask: { select: { id: true, name: true } },
           dependsOnSub: { select: { id: true, name: true } },
         },
-        orderBy: { createdAt: "asc" },
+        orderBy: [{ deadline: { sort: "asc", nulls: "last" } }, { createdAt: "asc" }],
       },
     },
   });
@@ -135,11 +135,7 @@ export default async function ProjectDetailPage({
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
-          {tasksForJson.map((task) => (
-            <TaskRow key={task.id} task={task} allTasks={allTasks} />
-          ))}
-        </div>
+        <TaskList tasks={tasksForJson} allTasks={allTasks} />
       )}
     </div>
   );

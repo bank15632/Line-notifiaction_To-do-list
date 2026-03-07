@@ -25,7 +25,7 @@ export default async function ProjectsPage() {
       include: {
         tasks: { include: { subTasks: true } },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
     });
 
     projectsWithStats = projects.map((p) => {

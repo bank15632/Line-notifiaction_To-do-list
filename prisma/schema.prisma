@@ -18,6 +18,7 @@ model Project {
   name        String
   description String?
   category    String             @default("General")
+  sortOrder   Int                @default(0)
   tasks       Task[]
   lineGroups  ProjectLineGroup[]
   createdAt   DateTime           @default(now())

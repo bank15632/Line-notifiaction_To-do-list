@@ -21,6 +21,12 @@ export default function RootLayout({
               To-Do List
             </Link>
             <Link
+              href="/"
+              className="text-gray-600 hover:text-indigo-600 text-sm"
+            >
+              Dashboard
+            </Link>
+            <Link
               href="/projects"
               className="text-gray-600 hover:text-indigo-600 text-sm"
             >
