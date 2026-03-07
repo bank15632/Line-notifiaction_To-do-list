@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
       name: body.name,
       description: body.description || null,
       category: body.category || "General",
+      emoji: body.emoji || "📋",
     },
   });
   return NextResponse.json(project, { status: 201 });

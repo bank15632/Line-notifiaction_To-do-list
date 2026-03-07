@@ -11,6 +11,7 @@ export default function EditProjectPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("General");
+  const [emoji, setEmoji] = useState("\u{1F4CB}");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -20,6 +21,7 @@ export default function EditProjectPage() {
         setName(data.name);
         setDescription(data.description || "");
         setCategory(data.category || "General");
+        setEmoji(data.emoji || "\u{1F4CB}");
       });
   }, [projectId]);
 
@@ -30,7 +32,7 @@ export default function EditProjectPage() {
       await fetch(`/api/projects/${projectId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description: description || null, category }),
+        body: JSON.stringify({ name, description: description || null, category, emoji }),
       });
       router.push(`/projects/${projectId}`);
       router.refresh();
@@ -68,6 +70,19 @@ export default function EditProjectPage() {
             className="w-full border rounded-lg px-3 py-2 text-sm"
             placeholder="e.g. Work, Personal, Study"
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Project Emoji
+          </label>
+          <input
+            type="text"
+            value={emoji}
+            onChange={(e) => setEmoji(e.target.value)}
+            className="w-20 border rounded-lg px-3 py-2 text-xl text-center"
+            placeholder="\u{1F4CB}"
+          />
+          <p className="text-xs text-gray-400 mt-1">Emoji shown in LINE notifications</p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">

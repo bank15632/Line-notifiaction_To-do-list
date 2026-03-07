@@ -44,6 +44,7 @@ export async function PUT(
       name: body.name,
       description: body.description,
       ...(body.category !== undefined && { category: body.category }),
+      ...(body.emoji !== undefined && { emoji: body.emoji }),
       ...(body.archived !== undefined && { archived: body.archived }),
     },
   });
