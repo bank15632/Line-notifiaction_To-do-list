@@ -10,6 +10,7 @@ export default function EditProjectPage() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("General");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -18,6 +19,7 @@ export default function EditProjectPage() {
       .then((data) => {
         setName(data.name);
         setDescription(data.description || "");
+        setCategory(data.category || "General");
       });
   }, [projectId]);
 
@@ -28,7 +30,7 @@ export default function EditProjectPage() {
       await fetch(`/api/projects/${projectId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description: description || null }),
+        body: JSON.stringify({ name, description: description || null, category }),
       });
       router.push(`/projects/${projectId}`);
       router.refresh();
@@ -53,6 +55,18 @@ export default function EditProjectPage() {
             onChange={(e) => setName(e.target.value)}
             required
             className="w-full border rounded-lg px-3 py-2 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Category
+          </label>
+          <input
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 text-sm"
+            placeholder="e.g. Work, Personal, Study"
           />
         </div>
         <div>

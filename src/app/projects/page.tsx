@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import ProjectCard from "@/components/ProjectCard";
+import ProjectList from "@/components/ProjectList";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +9,7 @@ export default async function ProjectsPage() {
     id: string;
     name: string;
     description: string | null;
+    category: string;
     todoCount: number;
     doingCount: number;
     doneCount: number;
@@ -41,6 +42,7 @@ export default async function ProjectsPage() {
         id: p.id,
         name: p.name,
         description: p.description,
+        category: p.category,
         todoCount,
         doingCount,
         doneCount,
@@ -82,11 +84,7 @@ export default async function ProjectsPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
-          {projectsWithStats.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
+        <ProjectList projects={projectsWithStats} />
       )}
     </div>
   );

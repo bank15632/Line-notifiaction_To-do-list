@@ -25,6 +25,7 @@ export async function GET() {
       id: p.id,
       name: p.name,
       description: p.description,
+      category: p.category,
       todoCount,
       doingCount,
       doneCount,
@@ -44,6 +45,7 @@ export async function POST(req: NextRequest) {
     data: {
       name: body.name,
       description: body.description || null,
+      category: body.category || "General",
     },
   });
   return NextResponse.json(project, { status: 201 });

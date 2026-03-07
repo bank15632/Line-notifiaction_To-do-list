@@ -6,6 +6,7 @@ export interface ProjectWithStats {
   id: string;
   name: string;
   description: string | null;
+  category: string;
   todoCount: number;
   doingCount: number;
   doneCount: number;

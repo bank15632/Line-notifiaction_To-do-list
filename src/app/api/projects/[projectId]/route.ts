@@ -43,6 +43,7 @@ export async function PUT(
     data: {
       name: body.name,
       description: body.description,
+      ...(body.category !== undefined && { category: body.category }),
     },
   });
   return NextResponse.json(project);

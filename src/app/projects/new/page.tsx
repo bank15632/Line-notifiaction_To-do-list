@@ -7,6 +7,7 @@ export default function NewProjectPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("General");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -18,7 +19,7 @@ export default function NewProjectPage() {
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description: description || null }),
+        body: JSON.stringify({ name, description: description || null, category }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -61,6 +62,18 @@ export default function NewProjectPage() {
             required
             className="w-full border rounded-lg px-3 py-2 text-sm"
             placeholder="e.g. Website Redesign"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Category
+          </label>
+          <input
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 text-sm"
+            placeholder="e.g. Work, Personal, Study"
           />
         </div>
         <div>
