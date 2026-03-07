@@ -28,16 +28,18 @@ export async function PUT(
 ) {
   const { taskId } = await params;
   const body = await req.json();
+  // Build data object only with provided fields to support partial updates
+  const data: Record<string, unknown> = {};
+  if (body.name !== undefined) data.name = body.name;
+  if (body.description !== undefined) data.description = body.description || null;
+  if (body.deadline !== undefined) data.deadline = body.deadline ? new Date(body.deadline) : null;
+  if (body.status !== undefined) data.status = body.status;
+  if ("dependsOnTaskId" in body) data.dependsOnTaskId = body.dependsOnTaskId || null;
+  if ("dependsOnSubId" in body) data.dependsOnSubId = body.dependsOnSubId || null;
+
   const task = await prisma.task.update({
     where: { id: taskId },
-    data: {
-      name: body.name,
-      description: body.description,
-      deadline: body.deadline ? new Date(body.deadline) : null,
-      status: body.status,
-      dependsOnTaskId: body.dependsOnTaskId ?? null,
-      dependsOnSubId: body.dependsOnSubId ?? null,
-    },
+    data,
     include: {
       subTasks: true,
       dependsOnTask: { select: { id: true, name: true } },

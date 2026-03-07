@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import StatusBadge from "./StatusBadge";
 import DaysRemainingBadge from "./DaysRemaining";
 import SubTaskForm from "./SubTaskForm";
+import SubTaskEditForm from "./SubTaskEditForm";
 
 interface SubTask {
   id: string;
@@ -36,6 +38,7 @@ interface TaskRowProps {
 export default function TaskRow({ task, allTasks }: TaskRowProps) {
   const router = useRouter();
   const [showSubForm, setShowSubForm] = useState(false);
+  const [editingSubId, setEditingSubId] = useState<string | null>(null);
 
   const handleStatusChange = async (newStatus: string) => {
     await fetch(`/api/tasks/${task.id}`, {
@@ -109,6 +112,12 @@ export default function TaskRow({ task, allTasks }: TaskRowProps) {
             <option value="DOING">Doing</option>
             <option value="DONE">Done</option>
           </select>
+          <Link
+            href={`/projects/${task.projectId}/tasks/${task.id}/edit`}
+            className="text-indigo-500 hover:text-indigo-700 text-xs px-1"
+          >
+            Edit
+          </Link>
           <button
             onClick={handleDeleteTask}
             className="text-red-400 hover:text-red-600 text-xs px-1"
@@ -177,12 +186,29 @@ export default function TaskRow({ task, allTasks }: TaskRowProps) {
                   <option value="DONE">Done</option>
                 </select>
                 <button
+                  onClick={() => setEditingSubId(sub.id)}
+                  className="text-indigo-500 hover:text-indigo-700 text-xs px-1"
+                >
+                  Edit
+                </button>
+                <button
                   onClick={() => handleDeleteSub(sub.id)}
                   className="text-red-400 hover:text-red-600 text-xs px-1"
                 >
                   Delete
                 </button>
               </div>
+              {editingSubId === sub.id && (
+                <SubTaskEditForm
+                  subtaskId={sub.id}
+                  projectId={task.projectId}
+                  allTasks={allTasks}
+                  onClose={() => {
+                    setEditingSubId(null);
+                    router.refresh();
+                  }}
+                />
+              )}
             </div>
           ))}
         </div>
