@@ -95,6 +95,7 @@ export default function NotificationDashboard() {
   const [items, setItems] = useState<DeadlineItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [typeFilter, setTypeFilter] = useState<"subtask" | "task">("subtask");
 
   useEffect(() => {
     fetch("/api/deadlines")
@@ -105,10 +106,11 @@ export default function NotificationDashboard() {
 
   const categories = Array.from(new Set(items.map((i) => i.category))).sort();
 
-  // Filter out DONE items and apply category filter
+  // Filter out DONE items, apply category and type filter
   const active = items.filter((i) => {
     if (i.status === "DONE") return false;
     if (selectedCategory !== "All" && i.category !== selectedCategory) return false;
+    if (i.type !== typeFilter) return false;
     return true;
   });
 
@@ -153,6 +155,29 @@ export default function NotificationDashboard() {
           ))}
         </div>
       )}
+
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setTypeFilter("subtask")}
+          className={`px-3 py-1 rounded-full text-sm transition ${
+            typeFilter === "subtask"
+              ? "bg-purple-600 text-white"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
+        >
+          Sub-Tasks
+        </button>
+        <button
+          onClick={() => setTypeFilter("task")}
+          className={`px-3 py-1 rounded-full text-sm transition ${
+            typeFilter === "task"
+              ? "bg-purple-600 text-white"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
+        >
+          Tasks
+        </button>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <DeadlineCard title="Overdue / Today" items={today} color="bg-red-50 border-red-200" />

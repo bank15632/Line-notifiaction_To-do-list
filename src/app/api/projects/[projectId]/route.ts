@@ -44,6 +44,7 @@ export async function PUT(
       name: body.name,
       description: body.description,
       ...(body.category !== undefined && { category: body.category }),
+      ...(body.archived !== undefined && { archived: body.archived }),
     },
   });
   return NextResponse.json(project);

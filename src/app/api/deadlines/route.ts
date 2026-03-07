@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const projects = await prisma.project.findMany({
+    where: { archived: false },
     include: {
       tasks: {
         include: { subTasks: true },
