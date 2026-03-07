@@ -166,12 +166,12 @@ export default function TaskRow({ task, allTasks }: TaskRowProps) {
                 )}
                 {sub.dependsOnTaskId && (
                   <p className="text-xs text-amber-600 mt-0.5">
-                    Depends on Task ID: {sub.dependsOnTaskId}
+                    Depends on Task: {allTasks?.find((t) => t.id === sub.dependsOnTaskId)?.name || sub.dependsOnTaskId}
                   </p>
                 )}
                 {sub.dependsOnSubId && (
                   <p className="text-xs text-amber-600 mt-0.5">
-                    Depends on Sub-task ID: {sub.dependsOnSubId}
+                    Depends on Sub-task: {allTasks?.flatMap((t) => t.subTasks).find((s) => s.id === sub.dependsOnSubId)?.name || sub.dependsOnSubId}
                   </p>
                 )}
               </div>
