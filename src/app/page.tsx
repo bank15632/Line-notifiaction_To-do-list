@@ -175,7 +175,7 @@ export default function NotificationDashboard() {
         </button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="space-y-4">
         <DeadlineCard title="Overdue / Today" items={today} color="bg-red-50 border-red-200" />
         <DeadlineCard title="This Week" items={thisWeek} color="bg-orange-50 border-orange-200" />
         <DeadlineCard title="This Month" items={thisMonth} color="bg-yellow-50 border-yellow-200" />
