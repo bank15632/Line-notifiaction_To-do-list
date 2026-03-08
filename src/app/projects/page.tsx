@@ -22,10 +22,11 @@ export default async function ProjectsPage() {
 
   try {
     const projects = await prisma.project.findMany({
+      where: { archived: false },
       include: {
         tasks: { include: { subTasks: true } },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
     });
 
     projectsWithStats = projects.map((p) => {
@@ -61,12 +62,20 @@ export default async function ProjectsPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">All Projects</h1>
-        <Link
-          href="/projects/new"
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition"
-        >
-          + New Project
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/projects/archive"
+            className="text-gray-500 border px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition"
+          >
+            Archived
+          </Link>
+          <Link
+            href="/projects/new"
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition"
+          >
+            + New Project
+          </Link>
+        </div>
       </div>
 
       {error ? (

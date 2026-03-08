@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import TaskRow from "@/components/TaskRow";
+import TaskList from "@/components/TaskList";
 import DeleteProjectButton from "./DeleteProjectButton";
+import ArchiveProjectButton from "@/components/ArchiveProjectButton";
 
 export const dynamic = "force-dynamic";
 
@@ -17,11 +18,11 @@ export default async function ProjectDetailPage({
     include: {
       tasks: {
         include: {
-          subTasks: true,
+          subTasks: { orderBy: [{ deadline: { sort: "asc", nulls: "last" } }, { createdAt: "asc" }] },
           dependsOnTask: { select: { id: true, name: true } },
           dependsOnSub: { select: { id: true, name: true } },
         },
-        orderBy: { createdAt: "asc" },
+        orderBy: [{ deadline: { sort: "asc", nulls: "last" } }, { createdAt: "asc" }],
       },
     },
   });
@@ -67,14 +68,22 @@ export default async function ProjectDetailPage({
           >
             &larr; All Projects
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800 mt-1">
-            {project.name}
-          </h1>
+          <div className="flex items-center gap-2 mt-1">
+            <h1 className="text-2xl font-bold text-gray-800">
+              {project.name}
+            </h1>
+            {project.archived && (
+              <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">
+                Archived
+              </span>
+            )}
+          </div>
           {project.description && (
             <p className="text-gray-500 mt-1">{project.description}</p>
           )}
         </div>
         <div className="flex gap-2">
+          <ArchiveProjectButton projectId={projectId} archived={project.archived} />
           <Link
             href={`/projects/${projectId}/edit`}
             className="text-sm text-gray-500 border px-3 py-1.5 rounded-lg hover:bg-gray-50"
@@ -135,11 +144,7 @@ export default async function ProjectDetailPage({
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
-          {tasksForJson.map((task) => (
-            <TaskRow key={task.id} task={task} allTasks={allTasks} />
-          ))}
-        </div>
+        <TaskList tasks={tasksForJson} allTasks={allTasks} />
       )}
     </div>
   );

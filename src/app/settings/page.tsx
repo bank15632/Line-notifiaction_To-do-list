@@ -66,11 +66,11 @@ export default function SettingsPage() {
     await fetchData();
   };
 
-  const updateFrequency = async (id: string, days: number) => {
+  const updateGroup = async (id: string, data: Record<string, unknown>) => {
     await fetch(`/api/line-groups/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ notifyFrequency: days }),
+      body: JSON.stringify(data),
     });
     await fetchData();
   };
@@ -198,13 +198,14 @@ export default function SettingsPage() {
                   value={group.notifyFrequency}
                   onChange={(e) => {
                     const val = parseInt(e.target.value);
-                    if (val > 0) updateFrequency(group.id, val);
+                    if (val > 0) updateGroup(group.id, { notifyFrequency: val });
                   }}
                   className="border rounded px-2 py-1 text-sm w-20 text-center"
                 />
                 <span className="text-sm text-gray-600">
                   day{group.notifyFrequency !== 1 ? "s" : ""}
                 </span>
+                <span className="text-xs text-gray-400 ml-2">(daily at 07:00 Bangkok time)</span>
               </div>
 
               <div>

@@ -1,17 +1,36 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ProjectWithStats } from "@/types";
 import ProjectCard from "./ProjectCard";
 
-export default function ProjectList({ projects }: { projects: ProjectWithStats[] }) {
-  const categories = Array.from(new Set(projects.map((p) => p.category))).sort();
+export default function ProjectList({ projects: initialProjects }: { projects: ProjectWithStats[] }) {
+  const router = useRouter();
+  const categories = Array.from(new Set(initialProjects.map((p) => p.category))).sort();
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [projects, setProjects] = useState(initialProjects);
 
   const filtered =
     selectedCategory === "All"
       ? projects
       : projects.filter((p) => p.category === selectedCategory);
+
+  const moveProject = async (index: number, direction: "up" | "down") => {
+    const newList = [...projects];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newList.length) return;
+
+    [newList[index], newList[targetIndex]] = [newList[targetIndex], newList[index]];
+    setProjects(newList);
+
+    await fetch("/api/projects/reorder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderedIds: newList.map((p) => p.id) }),
+    });
+    router.refresh();
+  };
 
   return (
     <div>
@@ -44,9 +63,32 @@ export default function ProjectList({ projects }: { projects: ProjectWithStats[]
       )}
 
       <div className="grid gap-4 md:grid-cols-2">
-        {filtered.map((project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
+        {filtered.map((project) => {
+          const globalIndex = projects.findIndex((p) => p.id === project.id);
+          return (
+            <div key={project.id} className="relative group">
+              <ProjectCard project={project} />
+              <div className="absolute top-2 right-2 flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 transition z-10">
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); moveProject(globalIndex, "up"); }}
+                  disabled={globalIndex === 0}
+                  className="bg-white border shadow-sm rounded px-1.5 py-0.5 text-xs text-gray-500 hover:text-indigo-600 hover:border-indigo-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Move up"
+                >
+                  ▲
+                </button>
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); moveProject(globalIndex, "down"); }}
+                  disabled={globalIndex === projects.length - 1}
+                  className="bg-white border shadow-sm rounded px-1.5 py-0.5 text-xs text-gray-500 hover:text-indigo-600 hover:border-indigo-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Move down"
+                >
+                  ▼
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {filtered.length === 0 && (
