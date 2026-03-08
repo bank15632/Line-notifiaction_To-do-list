@@ -7,8 +7,10 @@ export interface ProjectWithStats {
   name: string;
   description: string | null;
   category: string;
+  emoji: string;
   todoCount: number;
   doingCount: number;
+  checkingCount: number;
   doneCount: number;
   totalTasks: number;
   completionPercent: number;

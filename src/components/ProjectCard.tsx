@@ -25,7 +25,10 @@ export default function ProjectCard({ project }: { project: ProjectWithStats }) 
     <Link href={`/projects/${project.id}`}>
       <div className="bg-white rounded-lg shadow-sm border p-5 hover:shadow-md transition cursor-pointer">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-lg text-gray-800">{project.name}</h3>
+          <h3 className="font-semibold text-lg text-gray-800">
+            <span className="mr-1.5">{project.emoji || "\u{1F4CB}"}</span>
+            {project.name}
+          </h3>
           <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full whitespace-nowrap">
             {project.category}
           </span>
@@ -59,6 +62,9 @@ export default function ProjectCard({ project }: { project: ProjectWithStats }) 
           </span>
           <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded">
             Doing: {project.doingCount}
+          </span>
+          <span className="bg-yellow-50 text-yellow-600 px-2 py-1 rounded">
+            Checking: {project.checkingCount}
           </span>
           <span className="bg-green-50 text-green-600 px-2 py-1 rounded">
             Done: {project.doneCount}

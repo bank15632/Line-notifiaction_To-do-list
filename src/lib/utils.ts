@@ -27,6 +27,8 @@ export function statusLabel(status: string): string {
       return "Todo";
     case "DOING":
       return "Doing";
+    case "CHECKING":
+      return "Checking";
     case "DONE":
       return "Done";
     default:
@@ -40,6 +42,8 @@ export function statusColor(status: string): string {
       return "bg-gray-200 text-gray-700";
     case "DOING":
       return "bg-blue-100 text-blue-700";
+    case "CHECKING":
+      return "bg-yellow-100 text-yellow-700";
     case "DONE":
       return "bg-green-100 text-green-700";
     default:

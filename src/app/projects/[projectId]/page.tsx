@@ -35,6 +35,7 @@ export default async function ProjectDetailPage({
   ];
   const todoCount = allItems.filter((s) => s === "TODO").length;
   const doingCount = allItems.filter((s) => s === "DOING").length;
+  const checkingCount = allItems.filter((s) => s === "CHECKING").length;
   const doneCount = allItems.filter((s) => s === "DONE").length;
   const total = allItems.length;
   const pct = total === 0 ? 0 : Math.round((doneCount / total) * 100);
@@ -112,6 +113,9 @@ export default async function ProjectDetailPage({
           </span>
           <span className="text-blue-500">
             Doing: <span className="font-semibold text-blue-700">{doingCount}</span>
+          </span>
+          <span className="text-yellow-500">
+            Checking: <span className="font-semibold text-yellow-700">{checkingCount}</span>
           </span>
           <span className="text-green-500">
             Done: <span className="font-semibold text-green-700">{doneCount}</span>

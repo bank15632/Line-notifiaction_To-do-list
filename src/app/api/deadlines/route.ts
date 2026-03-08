@@ -22,6 +22,7 @@ export async function GET() {
     projectName: string;
     projectId: string;
     category: string;
+    emoji: string;
     parentTaskName?: string;
   }[] = [];
 
@@ -37,6 +38,7 @@ export async function GET() {
           projectName: p.name,
           projectId: p.id,
           category: p.category,
+          emoji: p.emoji,
         });
       }
       for (const s of t.subTasks) {
@@ -50,6 +52,7 @@ export async function GET() {
             projectName: p.name,
             projectId: p.id,
             category: p.category,
+            emoji: p.emoji,
             parentTaskName: t.name,
           });
         }

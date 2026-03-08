@@ -12,6 +12,7 @@ interface DeadlineItem {
   projectName: string;
   projectId: string;
   category: string;
+  emoji: string;
   parentTaskName?: string;
 }
 
@@ -31,8 +32,19 @@ function statusColor(status: string) {
   switch (status) {
     case "TODO": return "bg-gray-100 text-gray-700";
     case "DOING": return "bg-blue-100 text-blue-700";
+    case "CHECKING": return "bg-yellow-100 text-yellow-700";
     case "DONE": return "bg-green-100 text-green-700";
     default: return "bg-gray-100 text-gray-600";
+  }
+}
+
+function statusText(status: string) {
+  switch (status) {
+    case "TODO": return "Todo";
+    case "DOING": return "Doing";
+    case "CHECKING": return "Checking";
+    case "DONE": return "Done";
+    default: return status;
   }
 }
 
@@ -52,37 +64,32 @@ function DeadlineCard({ title, items, color }: { title: string; items: DeadlineI
         <h3 className="font-semibold text-sm">{title}</h3>
         <span className="text-xs font-bold bg-white/70 px-2 py-0.5 rounded-full">{items.length}</span>
       </div>
-      <div className="space-y-2 max-h-80 overflow-y-auto">
+      <div className="space-y-1.5 max-h-80 overflow-y-auto">
         {items.map((item) => {
           const days = daysRemaining(item.deadline);
           return (
             <Link
               key={`${item.type}-${item.id}`}
               href={`/projects/${item.projectId}`}
-              className="block bg-white rounded p-3 hover:shadow-sm transition"
+              className="block bg-white rounded px-3 py-2 hover:shadow-sm transition"
             >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-sm font-medium text-gray-800 truncate">{item.name}</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${statusColor(item.status)}`}>
-                      {item.status === "TODO" ? "Todo" : item.status === "DOING" ? "Doing" : "Done"}
-                    </span>
-                    {item.type === "subtask" && (
-                      <span className="text-[10px] text-gray-400">sub-task</span>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    {item.projectName}{item.parentTaskName ? ` > ${item.parentTaskName}` : ""}
-                  </p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-xs text-gray-500">{formatDate(item.deadline)}</p>
-                  <p className={`text-xs font-semibold ${days < 0 ? "text-red-600" : days === 0 ? "text-orange-600" : days <= 3 ? "text-amber-600" : "text-gray-500"}`}>
-                    {days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? "Today" : `${days}d left`}
-                  </p>
-                </div>
+              <div className="flex items-center gap-2">
+                <span className="text-base shrink-0">{item.emoji}</span>
+                <span className="text-sm font-medium text-gray-800 truncate flex-1 min-w-0">{item.name}</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 ${statusColor(item.status)}`}>
+                  {statusText(item.status)}
+                </span>
+                {item.type === "subtask" && (
+                  <span className="text-[10px] text-gray-400 shrink-0">sub-task</span>
+                )}
+                <span className="text-xs text-gray-400 shrink-0 hidden sm:inline">{formatDate(item.deadline)}</span>
+                <span className={`text-xs font-semibold shrink-0 ${days < 0 ? "text-red-600" : days === 0 ? "text-orange-600" : days <= 3 ? "text-amber-600" : "text-gray-500"}`}>
+                  {days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? "Today" : `${days}d left`}
+                </span>
               </div>
+              <p className="text-[11px] text-gray-400 ml-7 truncate">
+                {item.projectName}{item.parentTaskName ? ` > ${item.parentTaskName}` : ""}
+              </p>
             </Link>
           );
         })}
@@ -96,6 +103,7 @@ export default function NotificationDashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [typeFilter, setTypeFilter] = useState<"subtask" | "task">("subtask");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   useEffect(() => {
     fetch("/api/deadlines")
@@ -106,9 +114,10 @@ export default function NotificationDashboard() {
 
   const categories = Array.from(new Set(items.map((i) => i.category))).sort();
 
-  // Filter out DONE items, apply category and type filter
+  // Apply category, type, and status filter
   const active = items.filter((i) => {
-    if (i.status === "DONE") return false;
+    if (statusFilter === "ALL" && i.status === "DONE") return false;
+    if (statusFilter !== "ALL" && i.status !== statusFilter) return false;
     if (selectedCategory !== "All" && i.category !== selectedCategory) return false;
     if (i.type !== typeFilter) return false;
     return true;
@@ -179,7 +188,29 @@ export default function NotificationDashboard() {
         </button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {[
+          { label: "All Status", value: "ALL" },
+          { label: "Todo", value: "TODO" },
+          { label: "Doing", value: "DOING" },
+          { label: "Checking", value: "CHECKING" },
+          { label: "Done", value: "DONE" },
+        ].map((f) => (
+          <button
+            key={f.value}
+            onClick={() => setStatusFilter(f.value)}
+            className={`px-3 py-1 rounded-full text-sm transition ${
+              statusFilter === f.value
+                ? "bg-teal-600 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="space-y-4">
         <DeadlineCard title="Overdue / Today" items={today} color="bg-red-50 border-red-200" />
         <DeadlineCard title="This Week" items={thisWeek} color="bg-orange-50 border-orange-200" />
         <DeadlineCard title="This Month" items={thisMonth} color="bg-yellow-50 border-yellow-200" />

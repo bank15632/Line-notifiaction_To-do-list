@@ -10,8 +10,10 @@ export default async function ProjectsPage() {
     name: string;
     description: string | null;
     category: string;
+    emoji: string;
     todoCount: number;
     doingCount: number;
+    checkingCount: number;
     doneCount: number;
     totalTasks: number;
     completionPercent: number;
@@ -36,6 +38,7 @@ export default async function ProjectsPage() {
       ];
       const todoCount = allItems.filter((s) => s === "TODO").length;
       const doingCount = allItems.filter((s) => s === "DOING").length;
+      const checkingCount = allItems.filter((s) => s === "CHECKING").length;
       const doneCount = allItems.filter((s) => s === "DONE").length;
       const total = allItems.length;
 
@@ -44,8 +47,10 @@ export default async function ProjectsPage() {
         name: p.name,
         description: p.description,
         category: p.category,
+        emoji: p.emoji,
         todoCount,
         doingCount,
+        checkingCount,
         doneCount,
         totalTasks: total,
         completionPercent: total === 0 ? 0 : Math.round((doneCount / total) * 100),
