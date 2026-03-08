@@ -25,7 +25,10 @@ export default function ProjectCard({ project }: { project: ProjectWithStats }) 
     <Link href={`/projects/${project.id}`}>
       <div className="bg-white rounded-lg shadow-sm border p-5 hover:shadow-md transition cursor-pointer">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-lg text-gray-800">{project.name}</h3>
+          <h3 className="font-semibold text-lg text-gray-800">
+            <span className="mr-1.5">{project.emoji || "\u{1F4CB}"}</span>
+            {project.name}
+          </h3>
           <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full whitespace-nowrap">
             {project.category}
           </span>

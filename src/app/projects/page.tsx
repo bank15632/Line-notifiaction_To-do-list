@@ -10,6 +10,7 @@ export default async function ProjectsPage() {
     name: string;
     description: string | null;
     category: string;
+    emoji: string;
     todoCount: number;
     doingCount: number;
     doneCount: number;
@@ -44,6 +45,7 @@ export default async function ProjectsPage() {
         name: p.name,
         description: p.description,
         category: p.category,
+        emoji: p.emoji,
         todoCount,
         doingCount,
         doneCount,
