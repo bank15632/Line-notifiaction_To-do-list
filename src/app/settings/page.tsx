@@ -205,16 +205,7 @@ export default function SettingsPage() {
                 <span className="text-sm text-gray-600">
                   day{group.notifyFrequency !== 1 ? "s" : ""}
                 </span>
-                <span className="text-sm text-gray-600 ml-2">at</span>
-                <input
-                  type="time"
-                  value={group.notifyTime}
-                  onChange={(e) => {
-                    if (e.target.value) updateGroup(group.id, { notifyTime: e.target.value });
-                  }}
-                  className="border rounded px-2 py-1 text-sm"
-                />
-                <span className="text-xs text-gray-400">(Bangkok time)</span>
+                <span className="text-xs text-gray-400 ml-2">(daily at 07:00 Bangkok time)</span>
               </div>
 
               <div>
