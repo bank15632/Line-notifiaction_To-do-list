@@ -3,10 +3,23 @@ import { prisma } from "@/lib/prisma";
 import { pushTextMessage } from "@/lib/line";
 import { buildNotificationMessage } from "@/lib/notification";
 
+function getBangkokHour(): number {
+  const now = new Date();
+  // Bangkok is UTC+7
+  const bangkokTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+  return bangkokTime.getUTCHours();
+}
+
 function shouldNotify(
   frequencyDays: number,
-  lastNotifiedAt: Date | null
+  lastNotifiedAt: Date | null,
+  notifyTime: string
 ): boolean {
+  // Check if current hour (Bangkok time) matches the configured notify time
+  const currentHour = getBangkokHour();
+  const [targetHour] = notifyTime.split(":").map(Number);
+  if (currentHour !== targetHour) return false;
+
   if (!lastNotifiedAt) return true;
 
   const now = new Date();
@@ -46,7 +59,7 @@ export async function GET(req: NextRequest) {
   let notifiedCount = 0;
 
   for (const group of groups) {
-    if (!shouldNotify(group.notifyFrequency, group.lastNotifiedAt)) {
+    if (!shouldNotify(group.notifyFrequency, group.lastNotifiedAt, group.notifyTime)) {
       continue;
     }
 
