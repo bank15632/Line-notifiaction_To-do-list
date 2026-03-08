@@ -6,6 +6,8 @@ function statusEmoji(status: string): string {
       return "\u26AA\uFE0F";
     case "DOING":
       return "\u{1F534}";
+    case "CHECKING":
+      return "\u{1F7E1}";
     case "DONE":
       return "\u{1F7E2}";
     default:
@@ -19,6 +21,8 @@ function statusLabel(status: string): string {
       return "Todo";
     case "DOING":
       return "Doing";
+    case "CHECKING":
+      return "Checking";
     case "DONE":
       return "Done";
     default:
@@ -109,9 +113,11 @@ export function buildNotificationMessage(projectLinks: ProjectWithTasks[]): stri
       for (const sub of task.subTasks) {
         const subStatus = sub.status === "DONE"
           ? doneText(sub.status)
-          : sub.status === "DOING"
-            ? deadlineText(sub.deadline) || " (started)"
-            : deadlineText(sub.deadline);
+          : sub.status === "CHECKING"
+            ? " (checking)"
+            : sub.status === "DOING"
+              ? deadlineText(sub.deadline) || " (started)"
+              : deadlineText(sub.deadline);
 
         let subDep = "";
         if (sub.dependsOnSubId) {

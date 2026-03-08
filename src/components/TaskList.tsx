@@ -41,6 +41,7 @@ export default function TaskList({ tasks, allTasks }: TaskListProps) {
     { label: "All", value: "ALL", count: tasks.length },
     { label: "Todo", value: "TODO", count: tasks.filter((t) => t.status === "TODO").length },
     { label: "Doing", value: "DOING", count: tasks.filter((t) => t.status === "DOING").length },
+    { label: "Checking", value: "CHECKING", count: tasks.filter((t) => t.status === "CHECKING").length },
     { label: "Done", value: "DONE", count: tasks.filter((t) => t.status === "DONE").length },
   ];
 

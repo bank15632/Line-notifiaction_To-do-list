@@ -32,8 +32,19 @@ function statusColor(status: string) {
   switch (status) {
     case "TODO": return "bg-gray-100 text-gray-700";
     case "DOING": return "bg-blue-100 text-blue-700";
+    case "CHECKING": return "bg-yellow-100 text-yellow-700";
     case "DONE": return "bg-green-100 text-green-700";
     default: return "bg-gray-100 text-gray-600";
+  }
+}
+
+function statusText(status: string) {
+  switch (status) {
+    case "TODO": return "Todo";
+    case "DOING": return "Doing";
+    case "CHECKING": return "Checking";
+    case "DONE": return "Done";
+    default: return status;
   }
 }
 
@@ -66,7 +77,7 @@ function DeadlineCard({ title, items, color }: { title: string; items: DeadlineI
                 <span className="text-base shrink-0">{item.emoji}</span>
                 <span className="text-sm font-medium text-gray-800 truncate flex-1 min-w-0">{item.name}</span>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 ${statusColor(item.status)}`}>
-                  {item.status === "TODO" ? "Todo" : item.status === "DOING" ? "Doing" : "Done"}
+                  {statusText(item.status)}
                 </span>
                 {item.type === "subtask" && (
                   <span className="text-[10px] text-gray-400 shrink-0">sub-task</span>
@@ -92,6 +103,7 @@ export default function NotificationDashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [typeFilter, setTypeFilter] = useState<"subtask" | "task">("subtask");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   useEffect(() => {
     fetch("/api/deadlines")
@@ -102,9 +114,10 @@ export default function NotificationDashboard() {
 
   const categories = Array.from(new Set(items.map((i) => i.category))).sort();
 
-  // Filter out DONE items, apply category and type filter
+  // Apply category, type, and status filter
   const active = items.filter((i) => {
-    if (i.status === "DONE") return false;
+    if (statusFilter === "ALL" && i.status === "DONE") return false;
+    if (statusFilter !== "ALL" && i.status !== statusFilter) return false;
     if (selectedCategory !== "All" && i.category !== selectedCategory) return false;
     if (i.type !== typeFilter) return false;
     return true;
@@ -173,6 +186,28 @@ export default function NotificationDashboard() {
         >
           Tasks
         </button>
+      </div>
+
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {[
+          { label: "All Status", value: "ALL" },
+          { label: "Todo", value: "TODO" },
+          { label: "Doing", value: "DOING" },
+          { label: "Checking", value: "CHECKING" },
+          { label: "Done", value: "DONE" },
+        ].map((f) => (
+          <button
+            key={f.value}
+            onClick={() => setStatusFilter(f.value)}
+            className={`px-3 py-1 rounded-full text-sm transition ${
+              statusFilter === f.value
+                ? "bg-teal-600 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
       </div>
 
       <div className="space-y-4">

@@ -98,6 +98,7 @@ export default function SubTaskEditForm({ subtaskId, projectId, allTasks, onClos
         >
           <option value="TODO">Todo</option>
           <option value="DOING">Doing</option>
+          <option value="CHECKING">Checking</option>
           <option value="DONE">Done</option>
         </select>
       </div>

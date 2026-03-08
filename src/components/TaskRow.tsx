@@ -110,6 +110,7 @@ export default function TaskRow({ task, allTasks }: TaskRowProps) {
           >
             <option value="TODO">Todo</option>
             <option value="DOING">Doing</option>
+            <option value="CHECKING">Checking</option>
             <option value="DONE">Done</option>
           </select>
           <Link
@@ -183,6 +184,7 @@ export default function TaskRow({ task, allTasks }: TaskRowProps) {
                 >
                   <option value="TODO">Todo</option>
                   <option value="DOING">Doing</option>
+                  <option value="CHECKING">Checking</option>
                   <option value="DONE">Done</option>
                 </select>
                 <button

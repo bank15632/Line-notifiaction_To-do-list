@@ -63,6 +63,9 @@ export default function ProjectCard({ project }: { project: ProjectWithStats }) 
           <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded">
             Doing: {project.doingCount}
           </span>
+          <span className="bg-yellow-50 text-yellow-600 px-2 py-1 rounded">
+            Checking: {project.checkingCount}
+          </span>
           <span className="bg-green-50 text-green-600 px-2 py-1 rounded">
             Done: {project.doneCount}
           </span>
