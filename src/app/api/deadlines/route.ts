@@ -8,7 +8,11 @@ export async function GET() {
     where: { archived: false },
     include: {
       tasks: {
-        include: { subTasks: true },
+        include: {
+          subTasks: true,
+          dependsOnTask: { select: { id: true, name: true } },
+          dependsOnSub: { select: { id: true, name: true } },
+        },
       },
     },
   });
@@ -23,12 +27,26 @@ export async function GET() {
     projectId: string;
     category: string;
     emoji: string;
+    dependsOn?: string;
     parentTaskName?: string;
   }[] = [];
+
+  // Build lookup maps for resolving dependency names
+  const taskNameMap = new Map<string, string>();
+  const subNameMap = new Map<string, string>();
+  for (const p of projects) {
+    for (const t of p.tasks) {
+      taskNameMap.set(t.id, t.name);
+      for (const s of t.subTasks) {
+        subNameMap.set(s.id, s.name);
+      }
+    }
+  }
 
   for (const p of projects) {
     for (const t of p.tasks) {
       if (t.deadline) {
+        const depName = t.dependsOnTask?.name || t.dependsOnSub?.name || undefined;
         items.push({
           id: t.id,
           name: t.name,
@@ -39,10 +57,16 @@ export async function GET() {
           projectId: p.id,
           category: p.category,
           emoji: p.emoji,
+          dependsOn: depName,
         });
       }
       for (const s of t.subTasks) {
         if (s.deadline) {
+          const depName = s.dependsOnSubId
+            ? subNameMap.get(s.dependsOnSubId)
+            : s.dependsOnTaskId
+              ? taskNameMap.get(s.dependsOnTaskId)
+              : undefined;
           items.push({
             id: s.id,
             name: s.name,
@@ -53,6 +77,7 @@ export async function GET() {
             projectId: p.id,
             category: p.category,
             emoji: p.emoji,
+            dependsOn: depName,
             parentTaskName: t.name,
           });
         }
