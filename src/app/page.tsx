@@ -13,6 +13,7 @@ interface DeadlineItem {
   projectId: string;
   category: string;
   emoji: string;
+  dependsOn?: string;
   parentTaskName?: string;
 }
 
@@ -87,9 +88,16 @@ function DeadlineCard({ title, items, color }: { title: string; items: DeadlineI
                   {days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? "Today" : `${days}d left`}
                 </span>
               </div>
-              <p className="text-[11px] text-gray-400 ml-7 truncate">
-                {item.projectName}{item.parentTaskName ? ` > ${item.parentTaskName}` : ""}
-              </p>
+              <div className="ml-7 flex items-center gap-2 flex-wrap">
+                <p className="text-[11px] text-gray-400 truncate">
+                  {item.projectName}{item.parentTaskName ? ` > ${item.parentTaskName}` : ""}
+                </p>
+                {item.dependsOn && (
+                  <span className="text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
+                    wait: {item.dependsOn}
+                  </span>
+                )}
+              </div>
             </Link>
           );
         })}

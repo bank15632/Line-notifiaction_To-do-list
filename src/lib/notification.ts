@@ -133,7 +133,7 @@ export function buildNotificationMessage(projectLinks: ProjectWithTasks[]): stri
     }
 
     if (i < projectLinks.length - 1) {
-      message += "\n-----------------------------------------";
+      message += "\n-----------------------------------------\n";
     }
   }
 
