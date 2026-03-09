@@ -108,7 +108,7 @@ export function buildNotificationMessage(projectLinks: ProjectWithTasks[]): stri
           ? dependencyText(task.dependsOnSub.name)
           : "";
 
-      message += `\n       \u25B6\uFE0F [${statusLabel(task.status)}] ${task.name}${taskStatus}${taskDep}`;
+      message += `\n\n       \u25B6\uFE0F [${statusLabel(task.status)}] ${task.name}${taskStatus}${taskDep}`;
 
       for (const sub of task.subTasks) {
         const subStatus = sub.status === "DONE"
@@ -133,7 +133,7 @@ export function buildNotificationMessage(projectLinks: ProjectWithTasks[]): stri
     }
 
     if (i < projectLinks.length - 1) {
-      message += "\n-----------------------------------------\n";
+      message += "\n---------------------------------------------------------------------------------------------------------\n";
     }
   }
 
